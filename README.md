@@ -4,9 +4,9 @@
 The goal was to simulate the traffic patterns of **B3 (Brazil Stock Exchange)**.
 
 **B3 Metrics:**
-*   **Daily Trade Volume**: ~3 Million trades/day (~110 trades/sec).
-*   **Daily Order Volume**: ~19 Million orders/day (~700 orders/sec).
-*   **Scope**: ~450 Symbols, ~150 Brokers.
+*   **Daily Trade Volume**: ~3 million trades/day (~110 trades/sec).
+*   **Daily Order Volume**: ~19 million orders/day (~700 orders/sec).
+*   **Scope**: ~450 symbols, ~150 brokers.
 *   **Traffic**: Real mix of Limit, Market, and Cancel orders + Read requests for Order Book, Price, and Balance.
 
 ---
@@ -18,7 +18,7 @@ The goal was to simulate the traffic patterns of **B3 (Brazil Stock Exchange)**.
 | :--- | :--- | :--- | :--- |
 | **V1** | Database-only | **~40%** | Database Locks |
 | **V2** | Memory Match / DB Reads | **~90%** | Database Reads |
-| **V3** | Full In-Memory | **~300%+** | CPU / Python |
+| **V3** | Full In-Memory | **~300%** | CPU / Python |
 
 ---
 
@@ -50,7 +50,7 @@ The goal was to simulate the traffic patterns of **B3 (Brazil Stock Exchange)**.
 **Architecture:**
 *   **Memory**: Holds all state (Order Book, Prices, Balances).
 *   **Database**: Used only for startup loading and background saving.
-*   **Reads**: Served 100% from memory (with a few fallbacks to DB).
+*   **Reads**: Served primarily from memory, with rare fallbacks to DB.
 
 **Result: 300% Scale**
 *   **Throughput**: Handles 3x B3 volume on a single node.
@@ -73,7 +73,7 @@ In V2/V3, we don't write to the DB immediately.
 *   **Benefit**: Converts thousands of small random writes into a few large sequential writes.
 
 ### Recovery
-If the server crashes, we lose the last ~30ms of data (in-memory queue). At a normal trading volume, this is ~20 orders and ~1 trade.
+If the server crashes, we lose the last ~30ms of data (in-memory queue). At a normal trading volume, this is ~21 orders and ~3.3 trades.
 *   **Mitigation**: In a real production system, we would implement a **Write-Ahead Log (WAL)** on disk to persist events *before* acknowledgment, preventing data loss even on failure.
 
 ---
@@ -103,6 +103,10 @@ To run the benchmarks and verify these results:
 2.  **Run the benchmark**:
     ```bash
     cd ../bench
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    
     # Run a realistic 60s simulation at 100% B3 scale
     python perf_realistic.py --version v3 --scale 100
     ```
