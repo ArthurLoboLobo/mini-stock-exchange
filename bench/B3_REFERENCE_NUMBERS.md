@@ -6,8 +6,8 @@ All values below represent 100% of estimated B3 load (`--scale 100`).
 
 ```
 --scale 25   → 112 symbols,  37 brokers,  175 orders/sec   (quick dev test)
---scale 100  → 450 symbols, 150 brokers,  700 orders/sec   (realistic B3)
---scale 300  → 450 symbols, 150 brokers, 2,100 orders/sec  (stress test)
+--scale 100  → 450 symbols, 100 brokers,  700 orders/sec   (realistic B3)
+--scale 300  → 450 symbols, 100 brokers, 2,100 orders/sec  (stress test)
 ```
 
 ## Constraints
@@ -16,7 +16,7 @@ All values below represent 100% of estimated B3 load (`--scale 100`).
 
 ```python
 B3_SYMBOLS = 450
-B3_BROKERS = 150
+B3_BROKERS = 100
 ZIPF_EXPONENT = 0.95
 ```
 
@@ -66,7 +66,7 @@ DURATION_DAY_PCT = 0.70         # 1 day (retail + institutional, effectively nev
 ### Scale behavior
 
 ```markdown
-- **Market Structure:** Symbols and brokers scale linearly up to 100%, capping at 450 and 150 respectively.
+- **Market Structure:** Symbols and brokers scale linearly up to 100%, capping at 450 and 100 respectively.
 - **Request Rates:** Order and cancel rates scale linearly with the scale percentage, with no upper cap.
 - **Floors:** Minimum values are enforced (5 symbols, 3 brokers, 10 orders/sec, 5 cancels/sec) to ensure the test remains functional at very low scales.
 ```
@@ -109,7 +109,7 @@ DURATION_DAY_PCT = 0.70         # 1 day (retail + institutional, effectively nev
 
 ### Market structure
 
-- B3 has ~450 listed stocks and ~150 registered broker-dealers.
+- B3 has ~450 listed stocks and ~100 registered broker-dealers.
 
 ### Order duration
 
@@ -120,5 +120,5 @@ DURATION_DAY_PCT = 0.70         # 1 day (retail + institutional, effectively nev
 ### Scale behavior
 
 - Below `--scale 100`, everything scales down proportionally — useful for quick dev tests with fewer symbols and brokers.
-- Above `--scale 100`, market structure is capped at B3 values (450 symbols, 150 brokers) and only request rates increase. This models stress scenarios: same market, more traffic per symbol.
+- Above `--scale 100`, market structure is capped at B3 values (450 symbols, 100 brokers) and only request rates increase. This models stress scenarios: same market, more traffic per symbol.
 - Estimated B3 peak (~2,275/sec) is reachable at `--scale 325`.

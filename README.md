@@ -6,7 +6,7 @@ The goal was to simulate the traffic patterns of **B3 (Brazil Stock Exchange)**.
 **B3 Metrics:**
 *   **Daily Trade Volume**: ~4 million trades/day (~140 trades/sec).
 *   **Daily Order Volume**: ~20 million orders/day (~700 orders/sec).
-*   **Scope**: ~450 symbols, ~150 brokers.
+*   **Scope**: ~450 symbols, ~100 brokers.
 *   **Traffic**: Real mix of Limit, Market, and Cancel orders + Read requests for Order Book, Price, and Balance.
 
 ---

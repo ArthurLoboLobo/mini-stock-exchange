@@ -289,7 +289,7 @@ Common HTTP error responses:
 
 ## Assumptions
 
-- ~150 brokers, ~450 stocks
+- ~100 brokers, ~450 stocks
 - ~4M trades/day (~140 trades/sec)
 - ~700 new orders/sec
 - Prices stored as integers (cents), 2 decimal places

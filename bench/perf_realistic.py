@@ -68,7 +68,7 @@ CATEGORY_DISPLAY_NAMES = {
 # ---------------------------------------------------------------------------
 
 B3_SYMBOLS = 450
-B3_BROKERS = 150
+B3_BROKERS = 100
 ZIPF_EXPONENT = 0.95
 B3_ORDER_RATE = 700
 B3_CANCEL_RATE = 245
