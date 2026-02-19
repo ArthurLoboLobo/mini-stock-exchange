@@ -77,18 +77,14 @@ DURATION_DAY_PCT = 0.70         # 1 day (retail + institutional, effectively nev
 
 ### Trades per day
 
-- B3 doesn't publish trade counts directly. We estimate ~3M equity trades/day from:
-  - Equity ADTV of ~R$24B/day (B3 4Q24 financial statement)
-  - Average trade value of ~R$8,000
-  - R$24B / R$8K ≈ 3M trades/day
+- ~4M trades/day average, from the B3 Boletim Diário do Mercado ([source](https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/consultas/boletim-diario/boletim-diario-do-mercado/)).
 
 ### Order and cancel rates
 
-- Our exchange has new orders and cancels only (no modify/amend messages).
-- With a ~10:1 order-to-trade ratio (ESMA HFT study) and removing ~15% for modifies, that's ~8.5 non-modify messages per trade. Of those, ~74% are new orders and ~26% are cancels (implied by our 35% cancel rate).
-- 3M trades × 8.5 × 0.74 = ~19M new orders/day ÷ 27,000 trading seconds = ~700/sec average.
-- Peak is ~2,275/sec (3.25× multiplier), reachable via `--scale 325`.
-- The ~35% cancel rate reflects B3's low HFT penetration (~10–15% of volume vs ~70% in the US) and single-venue structure (no fragmentation-driven cancel inflation), placing it closer to China (~25%) than the US (~97%).
+- With a 5:1 order-to-trade ratio: 4M trades × 5 = 20M new orders/day. The 5:1 ratio is conservative for a low-HFT market — high-HFT venues (US, EU) see 10–30:1; B3's low HFT penetration (~10–15%) brings it well below that range.
+- B3's equity market is open for ~8 hours/day (28800 trading seconds).
+- 20M ÷ 28800 ≈ 700 new orders/sec average.
+- ~35% cancel rate, reflects B3's low HFT penetration and single-venue structure (no fragmentation-driven cancel inflation).
 
 ### New order mix and match rate
 

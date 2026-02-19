@@ -287,7 +287,7 @@ Common HTTP error responses:
 ## Assumptions
 
 - ~150 brokers, ~450 stocks
-- ~3M trades/day (~110 trades/sec)
+- ~4M trades/day (~140 trades/sec)
 - ~700 new orders/sec
 - Prices stored as integers (cents), 2 decimal places
 - Matching priority: price-time (best price first, FIFO for ties)
