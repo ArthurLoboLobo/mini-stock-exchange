@@ -287,7 +287,7 @@ td:first-child { font-family: 'Courier New', monospace; }
   </tr>
   <tr>
     <td>orders</td>
-    <td>All active orders</td>
+    <td>All open + recently closed orders</td>
     <td>POST /orders, /cancel</td>
   </tr>
   <tr>
