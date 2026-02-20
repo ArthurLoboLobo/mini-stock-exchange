@@ -173,6 +173,63 @@ Client → FastAPI → PostgreSQL
 
 ---
 
+## V1: Database Schema
+
+<style scoped>
+.cols { display: flex; gap: 24px; margin-top: 16px; }
+.cols > div { flex: 1; }
+table { width: 100%; border-collapse: collapse; font-size: 18px; }
+th, td { padding: 5px 10px; text-align: left; }
+th { background-color: #053A22; color: #FAFBFC; }
+td { border-color: #d0d7de; }
+td:first-child { font-family: 'Courier New', monospace; }
+.tbl-title { background-color: #053A22; color: #FAFBFC; font-size: 22px; font-weight: bold; text-align: center; padding: 7px; }
+</style>
+
+<div class="cols">
+  <div>
+    <table>
+      <tr><td class="tbl-title" colspan="2">brokers</td></tr>
+      <tr><th>Column</th><th>Type</th></tr>
+      <tr><td>id</td><td>UUID PK</td></tr>
+      <tr><td>name</td><td>String</td></tr>
+      <tr><td>api_key_hash</td><td>String</td></tr>
+      <tr><td>webhook_url</td><td>String</td></tr>
+      <tr><td>created_at</td><td>Timestamp</td></tr>
+    </table>
+  </div>
+  <div>
+    <table>
+      <tr><td class="tbl-title" colspan="2">orders</td></tr>
+      <tr><th>Column</th><th>Type</th></tr>
+      <tr><td>id</td><td>UUID PK</td></tr>
+      <tr><td>broker_id</td><td>UUID FK</td></tr>
+      <tr><td>side</td><td>bid / ask</td></tr>
+      <tr><td>order_type</td><td>limit / market</td></tr>
+      <tr><td>symbol</td><td>String</td></tr>
+      <tr><td>price</td><td>Integer</td></tr>
+      <tr><td>quantity</td><td>Integer</td></tr>
+      <tr><td>remaining_quantity</td><td>Integer</td></tr>
+      <tr><td>valid_until</td><td>Timestamp</td></tr>
+      <tr><td>status</td><td>open / closed</td></tr>
+    </table>
+  </div>
+  <div>
+    <table>
+      <tr><td class="tbl-title" colspan="2">trades</td></tr>
+      <tr><th>Column</th><th>Type</th></tr>
+      <tr><td>id</td><td>UUID PK</td></tr>
+      <tr><td>buy_order_id</td><td>UUID FK</td></tr>
+      <tr><td>sell_order_id</td><td>UUID FK</td></tr>
+      <tr><td>symbol</td><td>String</td></tr>
+      <tr><td>price</td><td>Integer</td></tr>
+      <tr><td>quantity</td><td>Integer</td></tr>
+    </table>
+  </div>
+</div>
+
+---
+
 ## V1: Results
 
 ### ~25% of B3 (175 orders/second)
@@ -211,6 +268,42 @@ Client → FastAPI → In-Memory Engine → background flush → PostgreSQL
 
 ---
 
+## V2: In-Memory Structures
+
+<style scoped>
+table { width: 100%; border-collapse: collapse; font-size: 28px; margin-top: 30px; }
+th, td { padding: 18px 30px; text-align: left; }
+th { background-color: #053A22; color: #FAFBFC; }
+td { border-color: #d0d7de; }
+td:first-child { font-family: 'Courier New', monospace; }
+.tbl-title { background-color: #053A22; color: #FAFBFC; font-size: 24px; font-weight: bold; text-align: center; padding: 10px; }
+</style>
+
+<table>
+  <tr>
+    <th>Field</th>
+    <th>What it stores</th>
+    <th>Why in memory</th>
+  </tr>
+  <tr>
+    <td>orders</td>
+    <td>All active orders</td>
+    <td>POST /orders, /cancel</td>
+  </tr>
+  <tr>
+    <td>book</td>
+    <td>Open orders by price</td>
+    <td>POST /orders (matching)</td>
+  </tr>
+  <tr>
+    <td>brokers_by_key_hash</td>
+    <td>Auth table</td>
+    <td>All endpoin ts (Auth)</td>
+  </tr>
+</table>
+
+---
+
 ## V2: Results
 
 ### ~75% of B3 (525 orders/second)
@@ -246,6 +339,47 @@ Client → FastAPI → Full In-Memory State
 <!--
 "I moved everything into memory. Reads, writes, matching — all in-memory. The database is there for persistence and for rare fallbacks on older closed orders."
 -->
+
+---
+
+## V3: New In-Memory Structures
+
+<style scoped>
+table { width: 100%; border-collapse: collapse; font-size: 28px; margin-top: 30px; }
+th, td { padding: 18px 30px; text-align: left; }
+th { background-color: #053A22; color: #FAFBFC; }
+td { border-color: #d0d7de; }
+td:first-child { font-family: 'Courier New', monospace; }
+.tbl-title { background-color: #053A22; color: #FAFBFC; font-size: 24px; font-weight: bold; text-align: center; padding: 10px; }
+</style>
+
+<table>
+  <tr>
+    <th>Field</th>
+    <th>What it stores</th>
+    <th>Why in memory</th>
+  </tr>
+  <tr>
+    <td>brokers</td>
+    <td>Broker info + balance</td>
+    <td>GET /balance, webhooks</td>
+  </tr>
+  <tr>
+    <td>trades_by_order</td>
+    <td>Trades per order</td>
+    <td>GET /orders/{id}</td>
+  </tr>
+  <tr>
+    <td>trade_prices</td>
+    <td>Last 1000 trade prices</td>
+    <td>GET /stocks/.../price</td>
+  </tr>
+  <tr>
+    <td>queue</td>
+    <td>Pending DB writes</td>
+    <td>Background flush to DB</td>
+  </tr>
+</table>
 
 ---
 
