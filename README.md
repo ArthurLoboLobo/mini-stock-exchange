@@ -110,6 +110,7 @@ To run the benchmarks and verify these results:
     # Run a realistic 60s simulation at 100% B3 scale
     python perf_realistic.py --version v3 --scale 100
 
+    cd ../casev3
     docker-compose down -v
     ```
 
