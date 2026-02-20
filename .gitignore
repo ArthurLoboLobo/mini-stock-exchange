@@ -41,3 +41,6 @@ venv.bak/
 
 # Docker
 .docker/
+
+# Benchmark results
+bench/results/
