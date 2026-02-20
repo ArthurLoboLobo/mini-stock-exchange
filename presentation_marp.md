@@ -175,7 +175,7 @@ Client → FastAPI → PostgreSQL
 
 ## V1: Results
 
-### ~40% of B3 (280 orders/second)
+### ~25% of B3 (175 orders/second)
 
 **Bottleneck: Database Locks**
 
@@ -213,7 +213,7 @@ Client → FastAPI → In-Memory Engine → background flush → PostgreSQL
 
 ## V2: Results
 
-### ~90% of B3 (630 orders/second)
+### ~75% of B3 (525 orders/second)
 
 **Bottleneck: Database Reads**
 
@@ -251,7 +251,7 @@ Client → FastAPI → Full In-Memory State
 
 ## V3: Results
 
-### ~300% of B3 (2100 orders/second)
+### ~250% of B3 (1750 orders/second)
 
 **Bottleneck: CPU (Python)**
 
@@ -260,7 +260,7 @@ Client → FastAPI → Full In-Memory State
 - A single CPU core and the language Python are now the bottleneck
 
 <!--
-"It handles about 300% of B3's average order volume in the benchmark. The bottleneck is now Python itself, not the architecture."
+"It handles about 250% of B3's average order volume in the benchmark. The bottleneck is now Python itself, not the architecture."
 -->
 
 ---
@@ -307,9 +307,9 @@ td, th { padding: 10px 20px; }
 
 | Version | Architecture | Capacity | Bottleneck |
 |---------|-------------|----------|------------|
-| **V1** | Everything in the Database | **~40%** | Database locks |
-| **V2** | Match in Memory, Read from Database | **~90%** | Database reads |
-| **V3** | Everything in Memory, Database for Durability | **~300%** | CPU (Python) |
+| **V1** | Everything in the Database | **~25%** | Database locks |
+| **V2** | Match in Memory, Read from Database | **~75%** | Database reads |
+| **V3** | Everything in Memory, Database for Durability | **~250%** | CPU (Python) |
 
 <!--
 "Each version taught me where the bottleneck was. By V3, the architecture wasn't the problem anymore — the language was."

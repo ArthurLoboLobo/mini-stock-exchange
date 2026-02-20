@@ -16,13 +16,13 @@ The goal was to simulate the traffic patterns of **B3 (Brazil Stock Exchange)**.
 
 | Version | Architecture | Max Capacity (% of B3) | Limiting Factor |
 | :--- | :--- | :--- | :--- |
-| **V1** | Database-only | **~40%** | Database Locks |
-| **V2** | Memory Match / DB Reads | **~90%** | Database Reads |
-| **V3** | Full In-Memory | **~300%** | CPU / Python |
+| **V1** | Database-only | **~25%** | Database Locks |
+| **V2** | Memory Match / DB Reads | **~75%** | Database Reads |
+| **V3** | Full In-Memory | **~250%** | CPU / Python |
 
 ---
 
-## 3. Version 1: Database-only (40% of B3)
+## 3. Version 1: Database-only (25% of B3)
 **Architecture:**
 *   **Stateless API** + **PostgreSQL**.
 *   **Logic**: Every order is a single database transaction.
@@ -33,7 +33,7 @@ The goal was to simulate the traffic patterns of **B3 (Brazil Stock Exchange)**.
 
 ---
 
-## 4. Version 2: In-Memory Matching (90% of B3)
+## 4. Version 2: In-Memory Matching (75% of B3)
 **Architecture:**
 *   **Matching**: Moved to **In-Memory**.
 *   **Read endpoints**: Still query the database.  
@@ -46,14 +46,14 @@ The goal was to simulate the traffic patterns of **B3 (Brazil Stock Exchange)**.
 
 ---
 
-## 5. Version 3: Full In-Memory (300% of B3)
+## 5. Version 3: Full In-Memory (250% of B3)
 **Architecture:**
 *   **Memory**: Holds all state (Order Book, Prices, Balances).
 *   **Database**: Used only for startup loading and background saving.
 *   **Reads**: Served primarily from memory, with rare fallbacks to DB.
 
-**Result: 300% Scale**
-*   **Throughput**: Handles 3x B3 volume on a single node.
+**Result: 250% Scale**
+*   **Throughput**: Handles 2.5x B3 volume on a single node.
 *   **Latency**: Stable < 1ms.
 *   **Limit**: Now limited only by Python's CPU speed.
 
@@ -79,7 +79,7 @@ If the server crashes, we lose the last ~30ms of data (in-memory queue). At a no
 ---
 
 ## 7. Next Steps
-To scale beyond 300%:
+To scale beyond 250%:
 1.  **Sharding**: Split symbols across multiple servers (e.g., A-E on Server 1, F-K on Server 2, etc).
 2.  **Language**: Rewrite in Rust to improve CPU performance.
 
